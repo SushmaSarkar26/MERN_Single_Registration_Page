@@ -15,4 +15,3 @@ const Connection = async () => {
 
 
 Connection();
-// export default Connection;
