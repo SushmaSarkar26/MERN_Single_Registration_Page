@@ -6,8 +6,13 @@ const app = express();
 dotenv.config({ path: './.env'});
 
 require('./database/db'); 
-const User = require('./model/userSchema');
+// const User = require('./model/userSchema');
 
+
+// connect router file
+app.use(express.json());
+const userRouter = require('./router/auth')
+app.use('/users',userRouter.rout);
 
 
 // middleware
@@ -18,7 +23,7 @@ const middleware = (req, res, next) => {
 
 
 app.get('/', (req, res) => {
-    res.send(`Hello from the server`)
+    res.send(`Hello from the server index js`)
 });
 
 app.get('/about', middleware, (req, res) => {
@@ -26,7 +31,7 @@ app.get('/about', middleware, (req, res) => {
 });
 
 
-// Connection();
+
 
 
 app.listen(process.env.PORT, () => {
