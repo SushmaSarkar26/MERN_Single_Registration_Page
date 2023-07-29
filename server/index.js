@@ -2,9 +2,11 @@ const dotenv = require("dotenv");
 const mongoose = require('mongoose');
 const express = require('express');
 const app = express();
-require('./database/db');
 
 dotenv.config({ path: './.env'});
+
+require('./database/db'); 
+const User = require('./model/userSchema');
 
 
 
