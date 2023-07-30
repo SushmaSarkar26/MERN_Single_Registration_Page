@@ -48,7 +48,7 @@ router.get('/', (req, res) => {
 
 
 
-
+// // async await
 
 router.post('/register', async (req, res) => {
 
@@ -64,27 +64,55 @@ router.post('/register', async (req, res) => {
 
         if (userExist) {
             return res.status(422).json({ error: "Email already Exist"});
+        } else if (password != cpassword) {
+            return res.status(422).json({ error: "password are not matching"});
+        } else {
+            const user = new User({ name, email, phone, work, password, cpassword});
+    
+            await user.save();
+            res.status(201).json({ message: "user registered successfuly"});
         }
-
-        const user = new User({ name, email, phone, work, password, cpassword});
-
-        await user.save();
-        res.status(201).json({ message: "user registered successfuly"});
-
-
-        // const userRegister = await user.save();
-        // if (userRegister) {
-        //     res.status(201).json({ message: "user registered successfuly"});
-        // } else {
-        //     res.status(500).json({error: "failed to registered"});
-        // }
-
 
     } catch (err) {
         console.log(err);
     }
 
 });
+
+
+
+
+
+// login route 
+
+router.post('/signin', async (req, res) => {
+    // console.log(req.body);
+    // res.json({ message: "awesome"});
+    // res.json("awesome");
+
+    try {
+        const { email, password} = req.body;
+
+        if (!email || !password) {
+            return res.status(400).json({error:"Plz Filledthe data"})
+        }
+
+        const userLogin = await User.findOne({ email: email});
+
+        console.log(userLogin);
+
+        if (!userLogin){
+            res.status(400).json({ error: "user error"});
+        } else {
+            res.json({message: "user signin Successfully"});
+        }
+    }
+    catch (err) {
+        
+    }
+});
+
+
 
 
 
