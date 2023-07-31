@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcryptjs');
 
 require('../database/db'); 
 const User = require('../model/userSchema');
@@ -48,7 +49,7 @@ router.get('/', (req, res) => {
 
 
 
-// // async await
+// // async await    add data
 
 router.post('/register', async (req, res) => {
 
@@ -94,18 +95,27 @@ router.post('/signin', async (req, res) => {
         const { email, password} = req.body;
 
         if (!email || !password) {
-            return res.status(400).json({error:"Plz Filledthe data"})
+            return res.status(400).json({error:"Plz Filled the data"})
         }
 
         const userLogin = await User.findOne({ email: email});
 
-        console.log(userLogin);
+        // console.log(userLogin);
 
-        if (!userLogin){
-            res.status(400).json({ error: "user error"});
-        } else {
-            res.json({message: "user signin Successfully"});
+        if (userLogin) {
+            console.log("email")
+            const isMatch = await bcrypt.compare(password, userLogin.password);
+            
+            if (!isMatch){
+                return res.status(400).json({ error: "Invalid error pass"});
+            } else {
+                return res.json({message: "user signin Successfully"});
+            } 
         }
+        else {
+            res.status(400).json({ error: "Invalid error"});
+        }
+
     }
     catch (err) {
         
