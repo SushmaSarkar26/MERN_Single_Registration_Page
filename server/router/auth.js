@@ -1,6 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 require('../database/db'); 
 const User = require('../model/userSchema');
@@ -87,10 +88,6 @@ router.post('/register', async (req, res) => {
 // login route 
 
 router.post('/signin', async (req, res) => {
-    // console.log(req.body);
-    // res.json({ message: "awesome"});
-    // res.json("awesome");
-
     try {
         const { email, password} = req.body;
 
@@ -103,7 +100,14 @@ router.post('/signin', async (req, res) => {
         // console.log(userLogin);
 
         if (userLogin) {
-            console.log("email")
+            const token = await userLogin.generateAuthToken();
+            console.log(token);
+
+            res.cookie("jwtoken", token, {
+                expires: new Date(Date.now() + 258920000000),
+                httpOnly: true
+            });
+        
             const isMatch = await bcrypt.compare(password, userLogin.password);
             
             if (!isMatch){
